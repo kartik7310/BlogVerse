@@ -1,15 +1,25 @@
-# dependencies
-/node_modules
+# Node.js dependencies
+**/node_modules/
+**/dist/
+**/build/
 
-# environment variables
-.env
+# Environment variables
+**/.env
 
-# TypeScript build output (optional)
-dist
-build
-
-# logs (optional)
-*.log
+# Logs (optional)
+*/.log
 
 # OS files (optional)
 .DS_Store
+Thumbs.db
+
+# TypeScript output
+**/out/
+*/.tsbuildinfo
+
+# NPM lock files
+**/package-lock.json
+
+# Misc
+.idea/
+.vscode/
