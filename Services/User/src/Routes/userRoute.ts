@@ -1,0 +1,14 @@
+import express from "express";
+import { login, myProfile ,getUserProfile, updateUserProfile,updateProfileImage} from "../Controllers/user.js";
+import { auth } from "../Middleware/auth.js";
+import uploadFile from "../Config/multer.js";
+const router = express.Router();
+router.post("/", login);
+router.get("/me",auth, myProfile);
+router.post("/profile/update/pic",auth,uploadFile,updateProfileImage );
+router.get("/:id",getUserProfile );
+router.put("/profile/:userId",auth,updateUserProfile );
+
+export default router;
+
+
