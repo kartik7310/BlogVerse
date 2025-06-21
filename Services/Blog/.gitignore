@@ -1,25 +1,5 @@
-# Node.js dependencies
-**/node_modules/
-**/dist/
-**/build/
-
-# Environment variables
-**/.env
-
-# Logs (optional)
-*/.log
-
-# OS files (optional)
-.DS_Store
-Thumbs.db
-
-# TypeScript output
-**/out/
-*/.tsbuildinfo
-
-# NPM lock files
-**/package-lock.json
-
-# Misc
-.idea/
-.vscode/
+/node_modules
+/dist
+.env
+Dockerfile
+.dockerignore

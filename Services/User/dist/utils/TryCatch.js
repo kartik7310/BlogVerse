@@ -4,11 +4,8 @@ function TryCatch(handler) {
             await handler(req, res, next);
         }
         catch (error) {
-            console.error("Login error:", error);
-            res.status(500).json({
-                message: "Something went wrong",
-                error: error instanceof Error ? error.message : String(error),
-            });
+            console.error("Caught error in TryCatch:", error);
+            res.status(500).json({ message: "Something went wrong" });
         }
     };
 }

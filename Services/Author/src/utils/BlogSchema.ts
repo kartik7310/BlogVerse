@@ -1,6 +1,7 @@
 
 import { z } from "zod";
 
+
 export const blogSchema = z.object({
   title: z
     .string({ required_error: "title is required" })
@@ -29,3 +30,4 @@ export const blogSchema = z.object({
 });
 
 
+export type BlogData = z.infer<typeof blogSchema>;

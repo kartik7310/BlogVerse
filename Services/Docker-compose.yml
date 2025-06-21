@@ -1,0 +1,97 @@
+version: "3.9"
+
+services:
+  user-service:
+    build: ./User
+    container_name: user-service
+    ports:
+      - "8080:8080"
+    env_file:
+      - User/.env
+    depends_on:
+      - mongo
+    restart: always
+    networks:
+      - blogverse-net
+
+  author-service:
+    build: ./Author
+    container_name: author-service
+    ports:
+      - "5000:5000"
+    env_file:
+      - Author/.env
+    depends_on:
+      - postgres
+    restart: always
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    networks:
+      - blogverse-net
+
+  blog-service:
+    build: ./Blog
+    container_name: blog-service
+    ports:
+      - "5002:5002"
+    env_file:
+      - Blog/.env
+    depends_on:
+      - postgres
+    restart: always
+    networks:
+      - blogverse-net
+
+  mongo:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: always
+    networks:
+      - blogverse-net
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: blogverse
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - blogverse-net
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - blogverse-net
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+    networks:
+      - blogverse-net
+
+volumes:
+  mongo-data:
+  postgres-data:
+
+networks:
+  blogverse-net:
+    driver: bridge

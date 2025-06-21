@@ -3,6 +3,7 @@ import path from 'path';
 const getBuffer = (file) => {
     const parser = new DataURIParser();
     const extName = path.extname(file.originalname).toString();
-    return parser.format(extName, file.buffer);
+    const result = parser.format(extName, file.buffer);
+    return result; // result has .content (base64 string) and .mimetype
 };
 export default getBuffer;
