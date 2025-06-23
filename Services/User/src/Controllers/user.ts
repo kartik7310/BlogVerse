@@ -95,46 +95,7 @@ export const login = TryCatch(async (req, res): Promise<void> => {
   });
 });
 
-// export const login = TryCatch(async (req, res) => {
 
-//   const parsed = loginSchema.safeParse(req.body);
-
-  
-//   if (!parsed.success) {
-//     return res.status(400).json({
-//       message: "Invalid input",
-//       errors: parsed.error.flatten().fieldErrors,
-//     });
-//   }
- 
- 
-//   const { email, password } = parsed.data;
-
-//   const user = await User.findOne({ email });
-//   if (!user || user.provider !== "manual") {
-//     return res.status(401).json({ message: "Email not found" });
-//   }
-
-
- 
-//   const isMatch = await bcrypt.compare(password, user.password!);
-//   if (!isMatch) {
-//     return res.status(401).json({ message: "Invalid email or password" });
-//   }
-  
-//    const {id,name} = user
-//  const token = generateToken({ id,username:name });
-//   return res.status(200).json({
-//     message: "Login successful",
-//     token,
-//     user: {
-//       _id: user._id,
-//       name: user.name,
-//       email: user.email,
-//       image: user.image,
-//     },
-//   });
-// });
 export const googleLogin = TryCatch(async(req,res):Promise<void>=>{
 
     const { code } = req.body;

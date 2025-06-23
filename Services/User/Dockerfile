@@ -28,6 +28,7 @@ RUN npm install --omit=dev
 # Copy built code from builder stage
 COPY --from=builder /app/dist ./dist
 
+
 # Set NODE_ENV to production
 ENV NODE_ENV=production
 
