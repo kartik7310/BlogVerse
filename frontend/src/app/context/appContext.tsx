@@ -17,12 +17,10 @@ import { headers } from "next/headers";
 /* ─────────────────────────────
    1. API-endpoint constants
    ───────────────────────────── */
-export const USER_SERVICE =
-  process.env.NEXT_PUBLIC_USER_SERVICE ?? "http://localhost:8080";
-export const AUTHOR_SERVICE =
-  process.env.NEXT_PUBLIC_AUTHOR_SERVICE ?? "http://localhost:5000";
-export const BLOG_SERVICE =
-  process.env.NEXT_PUBLIC_BLOG_SERVICE ?? "http://localhost:5002"; // <- double-check port
+export const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE;
+export const blogServiceUrl = process.env.NEXT_PUBLIC_BLOG_SERVICE;
+export const authorServiceUrl = process.env.NEXT_PUBLIC_AUTHOR_SERVICE ;
+console.log("api is here",userServiceUrl); 
 
 export interface User {
   _id:string
@@ -105,7 +103,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
 
     try {
-      const { data } = await axios.get<User>(`${USER_SERVICE}/api/v1/user/me`, {
+      const { data } = await axios.get<User>(`${userServiceUrl}/api/v1/user/me`, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
@@ -138,7 +136,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     try {
       setBlogLoading(true);
       const response = await axios.get<Blog[]>(
-        `${BLOG_SERVICE}/api/v1/blog/all?searchQuery=${searchQuery}&category=${category}`
+        `${blogServiceUrl}/api/v1/blog/all?searchQuery=${searchQuery}&category=${category}`
       );
       setBlogs(response?.data?.blog);
       
@@ -155,7 +153,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   async function getSavedBlog() {
     try {
       const token = Cookies.get("token");
-      const{data} = await axios.get("http://localhost:5002/api/v1/blog/saved/blog",{
+      const{data} = await axios.get(`${blogServiceUrl}/api/v1/blog/saved/blog`,{
         headers:{
           Authorization: `Bearer ${token}`,
         }
@@ -209,8 +207,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   return (
     <GoogleOAuthProvider
       clientId={
-        process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ??
-        "1075856409047-45fn8tgfkjaqsdeidf328siacrajlkqd.apps.googleusercontent.com"
+        process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string
+        
       }
     >
       <AppContext.Provider value={contextValue}>

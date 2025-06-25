@@ -28,11 +28,12 @@ RUN npm install --omit=dev
 # Copy built code from builder stage
 COPY --from=builder /app/dist ./dist
 
+
 # Set NODE_ENV to production
 ENV NODE_ENV=production
 
 # # Expose the port your app listens on (if applicable, e.g., 3000)
-# EXPOSE 3000
+# EXPOSE 5002
 
 # Start the app
 CMD ["node", "dist/server.js"]

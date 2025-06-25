@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, notFound, useRouter } from "next/navigation";
 import {
-  AUTHOR_SERVICE,
+ authorServiceUrl,
   Blog,
-  BLOG_SERVICE,
+  blogServiceUrl,
   useAppContext,
   User,
 } from "@/app/context/appContext";
@@ -39,7 +39,7 @@ const Page = () => {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `http://localhost:5002/api/v1/blog/${id}`
+        `${blogServiceUrl}/api/v1/blog/${id}`
       );
       setBlog(data?.blog?.blog);
       setAuthor(data?.blog?.author);
@@ -53,7 +53,7 @@ const Page = () => {
   const fetchComments = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5002/api/v1/blog/comment/fetch/${id}`
+        `${blogServiceUrl}/api/v1/blog/comment/fetch/${id}`
       );
       setComments(data);
     } catch (err: any) {
@@ -76,7 +76,7 @@ const Page = () => {
     try {
       confirm("are you sure to delete this");
       const token = Cookies.get("token");
-      await axios.delete(`${AUTHOR_SERVICE}/api/v1/blog/${id}`, {
+      await axios.delete(`${authorServiceUrl}/api/v1/blog/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success("Blog deleted successfully");
@@ -92,7 +92,7 @@ const Page = () => {
     try {
       const token = Cookies.get("token");
       const { data } = await axios.post(
-        `http://localhost:5002/api/v1/blog/comment/${id}`,
+        `${blogServiceUrl}/api/v1/blog/comment/${id}`,
         { comment: newComment },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -113,14 +113,14 @@ const Page = () => {
        
         const token = Cookies.get("token");
         const { data } = await axios.delete(
-          `http://localhost:5002/api/v1/blog/comment/delete/${id}`,
+          `${blogServiceUrl}/api/v1/blog/comment/delete/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        toast.success(data.message);
+        toast.success(data?.message);
         fetchComments();
       } catch (error:any) {
         toast.error("Problem while deleting comment");
@@ -134,10 +134,10 @@ async function handleSavedBlog() {
   try {
     // setLoading(true)
     const token = Cookies.get("token");
-    const {data} = await axios.post(`http://localhost:5002/api/v1/blog/save/${id}`,{},{
+    const {data} = await axios.post(`${blogServiceUrl}/api/v1/blog/save/${id}`,{},{
        headers: { Authorization: `Bearer ${token}` },
     })
-    toast.success(data.message)
+    toast.success(data?.message)
     setSaved(!save)
   } catch (err:any) {
     toast.error(err?.response?.data?.message ?? "Something went wrong");

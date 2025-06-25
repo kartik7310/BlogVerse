@@ -20,33 +20,6 @@ exports.getAllBlogs = (0, TryCatch_1.default)(async (req, res) => {
         return;
     }
     let blogs;
-    //  if (searchQuery && category) {
-    //   const search = `%${searchQuery}%`;
-    //   blogs = await sql`
-    //     SELECT * FROM blogs 
-    //     WHERE (title ILIKE ${search} OR description ILIKE ${search})
-    //     AND category = ${category}
-    //     ORDER BY createdAt DESC;
-    //   `;
-    // }else if (searchQuery) {
-    //   const search = `%${searchQuery.trim()}%`;
-    //   blogs = await sql`
-    //     SELECT * FROM blogs 
-    //     WHERE title ILIKE ${search} 
-    //     OR description ILIKE ${search} 
-    //     ORDER BY createdAt DESC;
-    //   `;
-    // } else if (category) {
-    //   const cleanCategory = category.trim();
-    //   blogs = await sql`
-    //     SELECT * FROM blogs 
-    //     WHERE category = ${cleanCategory} 
-    //     ORDER BY createdAt DESC;
-    //   `;
-    // }
-    //   else{
-    //     blogs = await sql `SELECT * FROM blogs ORDER BY createdAt DESC`
-    //   }
     if (searchQuery && category) {
         blogs = await (0, db_1.sql) `SELECT * FROM blogs WHERE (title ILIKE ${"%" + searchQuery + "%"} OR description ILIKE ${"%" + searchQuery + "%"}) AND category = ${category} ORDER BY createdAt DESC`;
     }
@@ -65,7 +38,7 @@ exports.getAllBlogs = (0, TryCatch_1.default)(async (req, res) => {
         res.status(404).json({ message: "blogs not found " });
         return;
     }
-    await server_1.redisClient.set(cacheKey, JSON.stringify(blogs), { EX: 3000 });
+    await server_1.redisClient.set(cacheKey, JSON.stringify(blogs), { EX: 300 });
     res.status(200).json({ message: "blogs fetch successfully", blog: blogs });
     return;
 });
@@ -124,8 +97,6 @@ exports.deleteComment = (0, TryCatch_1.default)(async (req, res) => {
         res.status(404).json({ message: "Comment not found" });
         return;
     }
-    console.log("comments is here", comment);
-    // Authorization check
     if (comment.userid !== userId) {
         res.status(403).json({ message: "You are not allowed to delete this comment" });
         return;

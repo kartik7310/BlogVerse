@@ -7,11 +7,6 @@ import { useAppContext } from '../context/appContext';
 import { Suspense } from "react";
 const Page = () => {
   const {isAuth,blog,loading} = useAppContext();
-console.log("loading is here",loading);
-
-  console.log("blog is here",blog);
-
-
   
   const [isOpen, setIsOpen] = useState<boolean>(false);
 

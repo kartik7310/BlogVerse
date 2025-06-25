@@ -21,8 +21,6 @@ services:
       - "5000:5000"
     env_file:
       - Author/.env
-    depends_on:
-      - postgres
     restart: always
     dns:
       - 8.8.8.8
@@ -38,7 +36,7 @@ services:
     env_file:
       - Blog/.env
     depends_on:
-      - postgres
+    - user-service
     restart: always
     networks:
       - blogverse-net
@@ -54,21 +52,7 @@ services:
     networks:
       - blogverse-net
 
-  postgres:
-    image: postgres
-    container_name: postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: blogverse
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    restart: always
-    networks:
-      - blogverse-net
-
+ 
   redis:
     image: redis
     container_name: redis
@@ -90,7 +74,6 @@ services:
 
 volumes:
   mongo-data:
-  postgres-data:
 
 networks:
   blogverse-net:

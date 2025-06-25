@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { useAppContext, USER_SERVICE } from "../context/appContext";
+import { useAppContext, userServiceUrl } from "../context/appContext";
 import { FaUpload, FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import Loading from "@/components/Loading";
 import axios from "axios";
@@ -39,7 +39,7 @@ const ProfileCard: React.FC = () => {
       const token = Cookies.get("token");
 
       const { data } = await axios.post(
-        `${USER_SERVICE}/api/v1/user/profile/update/pic`,
+        `${userServiceUrl}/api/v1/user/profile/update/pic`,
         formData,
         {
           headers: {

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
-import { useAppContext, USER_SERVICE } from '../context/appContext';
+import { useAppContext,userServiceUrl } from '../context/appContext';
 
 interface UserPayload {
   name: string;
@@ -30,7 +30,7 @@ const Signup = () => {
   // 2. --- API helper (could live in /lib/api.ts)
   const register = async (payload: UserPayload) =>
     axios.post(
-      `${USER_SERVICE}/api/v1/user/register`,
+      `${userServiceUrl}/api/v1/user/register`,
       payload,
       { withCredentials: true }
     );

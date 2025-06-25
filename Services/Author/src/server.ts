@@ -6,17 +6,18 @@ import { sql } from "./config/db.js";
 import { connectionRabbitMQ } from './utils/rabitMQ.js';
 import cors from "cors" 
 const app = express();
-
+const frontend_Url = process.env.Frontend_Url;
 
 app.use(
   cors({
-    origin: "http://localhost:3000",          // front-end origin
+    origin:frontend_Url,          // front-end origin
     methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
     credentials: true                         // if you set cookies
   })
 );
 app.use(express.json());
 
+app.use("/api/v1",blogRoute)
 async function initDb() {
   // BLOGS ----------------------------------------------------
   await sql`CREATE TABLE IF NOT EXISTS blogs (
@@ -49,7 +50,7 @@ async function initDb() {
   )`;
 
 
-app.use("/api/v1",blogRoute)
+
 
 
   console.log('📦  Database initialised successfully');

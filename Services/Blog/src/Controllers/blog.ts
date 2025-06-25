@@ -18,34 +18,7 @@ export const getAllBlogs = TryCatch(async(req,res):Promise<void>=>{
     return ;
   }
   let blogs;
-//  if (searchQuery && category) {
-//   const search = `%${searchQuery}%`;
-//   blogs = await sql`
-//     SELECT * FROM blogs 
-//     WHERE (title ILIKE ${search} OR description ILIKE ${search})
-//     AND category = ${category}
-//     ORDER BY createdAt DESC;
-//   `;
-// }else if (searchQuery) {
-//   const search = `%${searchQuery.trim()}%`;
-//   blogs = await sql`
-//     SELECT * FROM blogs 
-//     WHERE title ILIKE ${search} 
-//     OR description ILIKE ${search} 
-//     ORDER BY createdAt DESC;
-//   `;
-// } else if (category) {
-//   const cleanCategory = category.trim();
-//   blogs = await sql`
-//     SELECT * FROM blogs 
-//     WHERE category = ${cleanCategory} 
-//     ORDER BY createdAt DESC;
-//   `;
-// }
 
-//   else{
-//     blogs = await sql `SELECT * FROM blogs ORDER BY createdAt DESC`
-//   }
   if (searchQuery && category) {
     blogs = await sql`SELECT * FROM blogs WHERE (title ILIKE ${
       "%" + searchQuery + "%"
@@ -70,7 +43,7 @@ export const getAllBlogs = TryCatch(async(req,res):Promise<void>=>{
   }
 
   
- await redisClient.set(cacheKey,JSON.stringify(blogs),{EX:3000})
+ await redisClient.set(cacheKey,JSON.stringify(blogs),{EX:300})
    res.status(200).json({message:"blogs fetch successfully",blog:blogs});
    return;
 
@@ -149,8 +122,7 @@ export const deleteComment = TryCatch(async (req: authenticateRequest, res):Prom
      res.status(404).json({ message: "Comment not found" });
      return;
   }
-  console.log("comments is here",comment);
-  // Authorization check
+
   if (comment.userid !== userId) {
      res.status(403).json({ message: "You are not allowed to delete this comment" });
      return;

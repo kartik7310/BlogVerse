@@ -12,6 +12,7 @@ app.use(cors({
     credentials: true // if you set cookies
 }));
 app.use(express.json());
+app.use("/api/v1", blogRoute);
 async function initDb() {
     // BLOGS ----------------------------------------------------
     await sql `CREATE TABLE IF NOT EXISTS blogs (
@@ -40,7 +41,6 @@ async function initDb() {
       blogId    VARCHAR(255)   NOT NULL,
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`;
-    app.use("/api/v1", blogRoute);
     console.log('📦  Database initialised successfully');
 }
 (async () => {

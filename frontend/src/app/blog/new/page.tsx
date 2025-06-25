@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RefreshCw } from "lucide-react";
 import dynamic from "next/dynamic";
-import { AUTHOR_SERVICE, Blog } from "@/app/context/appContext";
+import {  authorServiceUrl, Blog } from "@/app/context/appContext";
 import toast from "react-hot-toast";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
@@ -74,7 +74,7 @@ const AddBlog = () => {
       setLoading(true);
       const token = Cookies.get("token");
       const { data } = await axios.post(
-        `${AUTHOR_SERVICE}/api/v1/blog/new`,
+        `${authorServiceUrl}/api/v1/blog/new`,
         fd,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -101,7 +101,7 @@ const AddBlog = () => {
     try {
       setAiTitle(true);
       const { data } = await axios.post(
-        `${AUTHOR_SERVICE}/api/v1/ai/title`,
+        `${authorServiceUrl}/api/v1/ai/title`,
         { text: formData.title }
       );
       setFormData({ ...formData, title: data.title ?? data });
@@ -118,7 +118,7 @@ const AddBlog = () => {
     try {
       setAiDescription(true);
       const { data } = await axios.post(
-        `${AUTHOR_SERVICE}/api/v1/ai/description`,
+        `${authorServiceUrl}/api/v1/ai/description`,
         { title: formData.title, description: formData.description }
       );
       setFormData({ ...formData, description: data.description ?? data });
@@ -135,7 +135,7 @@ const AddBlog = () => {
     try {
       setAiBlogLoading(true);
       const { data } = await axios.post(
-        `${AUTHOR_SERVICE}/api/v1/ai/blog`,
+        `${authorServiceUrl}/api/v1/ai/blog`,
         { blog: formData.blogContent }
       );
       const html = data.html ?? data;

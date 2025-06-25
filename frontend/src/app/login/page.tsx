@@ -7,7 +7,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 import axios from "axios";
-import { useAppContext } from '../context/appContext';
+import { useAppContext, userServiceUrl } from '../context/appContext';
 import Loading from '@/components/Loading';
 import { redirect ,useRouter} from 'next/navigation'
 
@@ -31,7 +31,7 @@ const Login = () => {
   const googleResponse = async (authResult: any) => {
     try {
       const result = await axios.post(
-        "http://localhost:8080/api/v1/user/google-login",
+        `${userServiceUrl}/api/v1/user/google-login`,
         {
           code: authResult.code,
         },
@@ -40,13 +40,13 @@ const Login = () => {
         }
       );
 
-      Cookies.set("token", result.data.token, {
+      Cookies.set("token", result?.data?.token, {
         expires: 1,
         path: "/",
       });
 
       setIsAuth(true);
-      toast.success(result.data.message || "Logged in successfully!");
+      toast.success(result?.data?.message || "Logged in successfully!");
     } catch (error: any) {
       toast.error(`Login failed: ${error?.response?.data?.message || error.message}`);
     }
@@ -70,7 +70,7 @@ const Login = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:8080/api/v1/user/login",
+        `${userServiceUrl}/api/v1/user/login`,
         user,
         {
           withCredentials: true,
@@ -83,7 +83,7 @@ const Login = () => {
       });
 
       setIsAuth(true);
-      toast.success(response.data.message || "Logged in successfully!");
+      toast.success(response?.data?.message || "Logged in successfully!");
     } catch (error: any) {
       toast.error(`Login failed: ${error?.response?.data?.message || error.message}`);
     } finally {

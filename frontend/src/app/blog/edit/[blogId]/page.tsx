@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import dynamic from "next/dynamic";
-import { AUTHOR_SERVICE, useAppContext } from "@/app/context/appContext";
+import { authorServiceUrl, blogServiceUrl, useAppContext } from "@/app/context/appContext";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 
@@ -52,7 +52,7 @@ const[existingImage,setExistingImage] = useState(null)
   const fetchSingleBlog = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`http://localhost:5002/api/v1/blog/${blogId}`);
+      const { data } = await axios.get(`${blogServiceUrl}/api/v1/blog/${blogId}`);
       const blog = data?.blog?.blog;
 
       setFormData({
@@ -119,7 +119,7 @@ const BlogUpdate = async (e: React.FormEvent) => {
     }
 
     const { data } = await axios.put(
-      `${AUTHOR_SERVICE}/api/v1/blog/update/${blogId}`,
+      `${authorServiceUrl}/api/v1/blog/update/${blogId}`,
       fd,
       {
         headers: {
@@ -129,7 +129,7 @@ const BlogUpdate = async (e: React.FormEvent) => {
       }
     );
 
-    toast.success(data.message ?? "Blog updated successfully");
+    toast.success(data?.message ?? "Blog updated successfully");
 
     setFormData({
       title: "",

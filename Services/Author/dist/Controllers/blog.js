@@ -7,10 +7,9 @@ import getBuffer from "../utils/dataUri.js";
 import TryCatch from "../utils/TryCatch.js";
 import { GoogleGenAI } from '@google/genai';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { invalidateCacheJob } from "../utils/rabitMQ.js";
 const GEMINI_API_KEY = process.env.GOOGLE_GEMINI_API_KEY;
 export const createBlog = TryCatch(async (req, res) => {
-    /* ------------------------------------------------------------------ *
-     * 1.  Validate body ------------------------------------------------- */
     const parsed = blogSchema.safeParse(req.body);
     if (!parsed.success) {
         res.status(400).json({
@@ -20,8 +19,6 @@ export const createBlog = TryCatch(async (req, res) => {
         return;
     }
     const { title, description, blogContent, category } = parsed.data;
-    /* ------------------------------------------------------------------ *
-     * 2.  Validate file -------------------------------------------------- */
     if (!req.file) {
         res.status(400).json({ message: 'No file to upload' });
         return;
@@ -31,12 +28,7 @@ export const createBlog = TryCatch(async (req, res) => {
         res.status(400).json({ message: 'Failed to generate buffer' });
         return;
     }
-    /* ------------------------------------------------------------------ *
-     * 3.  Upload image --------------------------------------------------- */
     const { secure_url: imageUrl } = await cloudinary.uploader.upload(fileBuffer.content, { folder: 'blogs' });
-    /* ------------------------------------------------------------------ *
-     * 4.  Insert blog row  --------------------------------------------- */
-    // ensure the order of VALUES matches the column list exactly!
     const blog = await sql `
     INSERT INTO blogs
       (title, description, category, blogContent, author, image)
@@ -44,8 +36,7 @@ export const createBlog = TryCatch(async (req, res) => {
       (${title}, ${description}, ${category}, ${blogContent}, ${req.user}, ${imageUrl})
     RETURNING *
   `;
-    /* ------------------------------------------------------------------ *
-     * 5.  Respond -------------------------------------------------------- */
+    await invalidateCacheJob(["blogs:*"]);
     res.status(201).json({
         message: 'Blog created successfully',
         blog,
@@ -55,7 +46,6 @@ export const updateBlog = TryCatch(async (req, res) => {
     const { id } = req.params;
     const userId = req.user;
     const { title, description, blogContent, category } = req.body;
-    /* 1. Fetch the blog ---------------------------------------------------- */
     const blogs = await sql `
     SELECT * FROM blogs WHERE id = ${id}
   `;
@@ -64,14 +54,12 @@ export const updateBlog = TryCatch(async (req, res) => {
         return;
     }
     const blog = blogs[0];
-    /* 2. Authorisation check ---------------------------------------------- */
     if (blog.author !== userId) {
         res.status(409).json({ message: "You can't update this blog" });
         return;
     }
     let imageFile = blog.image;
     if (req.file) {
-        // assuming you use multer memoryStorage
         const fileBuffer = getBuffer(req.file);
         if (!fileBuffer?.content) {
             res.status(400).json({ message: "Failed to generate buffer" });
@@ -82,7 +70,6 @@ export const updateBlog = TryCatch(async (req, res) => {
         });
         imageFile = cloud.secure_url;
     }
-    /* 4. Run the UPDATE ---------------------------------------------------- */
     const updatedBlog = await sql `
     UPDATE blogs SET
       title        = ${title ?? blog.title},
@@ -93,6 +80,7 @@ export const updateBlog = TryCatch(async (req, res) => {
     WHERE id = ${id}
     RETURNING *
   `;
+    await invalidateCacheJob(["blogs:*", `blog:${id}`]);
     res.status(200).json({
         message: "Blog updated successfully",
         blog: updatedBlog,
@@ -114,6 +102,7 @@ export const deleteBlog = TryCatch(async (req, res) => {
     await sql `DELETE FROM savedBlogs WHERE blogId  = ${id}`;
     await sql `DELETE FROM comments WHERE blogId = ${id}`;
     await sql `DELETE FROM blogs WHERE id = ${id}`;
+    await invalidateCacheJob(["blogs:*", `blog:${id}`]);
     res.status(200).json({ message: 'blog deleted successfully' });
     return;
 });

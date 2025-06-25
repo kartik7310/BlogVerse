@@ -7,7 +7,7 @@
 
 # Environment variables
 **/.env
-**/.env.*
+**/.env.local*
 
 # Logs
 *.log
