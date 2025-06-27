@@ -17,6 +17,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import toast from "react-hot-toast";
+import RecomandedBlog from "@/components/RecomandedBlog";
 
 interface Comment {
   userId: string;
@@ -37,7 +38,6 @@ const Page = () => {
   const user = userData?.user
   const fetchSingleBlog = async () => {
     try {
-      setLoading(true);
       const { data } = await axios.get(
         `${blogServiceUrl}/api/v1/blog/${id}`
       );
@@ -45,8 +45,6 @@ const Page = () => {
       setAuthor(data?.blog?.author);
     } catch (error: any) {
       console.log(error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -289,6 +287,9 @@ async function handleSavedBlog() {
             </CardContent>
           </Card>
         )}
+      </div>
+      <div className="w-full mx-auto flex flex-wrap">
+        <RecomandedBlog blogId={id}/>
       </div>
     </div>
   );

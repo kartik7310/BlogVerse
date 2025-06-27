@@ -58,7 +58,7 @@ const HomePage = () => {
           Join thousands of bloggers sharing knowledge, opinions, and creativity with the world.
         </p>
         <Link href="/login">
-          <button className="bg-blue-600 text-white hover:bg-blue-700 font-semibold px-6 py-3 rounded-lg transition">
+          <button className="bg-blue-600 text-white hover:bg-blue-700 cursor-pointer font-semibold px-6 py-3 rounded-lg transition">
             Join Now
           </button>
         </Link>
