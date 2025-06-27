@@ -18,7 +18,7 @@ export default function Navbar() {
     <nav className="fixed inset-x-0 top-0 z-20 border-b border-gray-200 bg-white text-gray-900 shadow-sm">
       <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 py-3">
         {/* Logo */}
-        <Link href="/" onClick={handleNavigate} className="flex items-center gap-2">
+        <Link href="/home" onClick={handleNavigate} className="flex items-center gap-2">
           <Image
             src="https://flowbite.com/docs/images/logo.svg"
             width={32}

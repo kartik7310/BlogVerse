@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSavedBlog = exports.savedBlogs = exports.getRecommendedBlogs = exports.deleteComment = exports.getAllComments = exports.addComment = exports.singleBlog = exports.getAllBlogs = void 0;
+exports.getSavedBlog = exports.savedBlogs = exports.getRecommendedBlogs = exports.deleteComment = exports.getAllComments = exports.addComment = exports.getUserBlogs = exports.singleBlog = exports.getAllBlogs = void 0;
 const TryCatch_1 = __importDefault(require("../utils/TryCatch"));
 const axios_1 = __importDefault(require("axios"));
 const db_1 = require("../config/db");
@@ -33,9 +33,8 @@ exports.getAllBlogs = (0, TryCatch_1.default)(async (req, res) => {
     else {
         blogs = await (0, db_1.sql) `SELECT * FROM blogs ORDER BY createdAt DESC`;
     }
-    console.log("serving from db");
     if (blogs.length === 0) {
-        res.status(404).json({ message: "blogs not found " });
+        res.status(404).json({ message: "blog not exist" });
         return;
     }
     await server_1.redisClient.set(cacheKey, JSON.stringify(blogs), { EX: 300 });
@@ -60,6 +59,16 @@ exports.singleBlog = (0, TryCatch_1.default)(async (req, res) => {
     const response = { blog: blogs[0], author: data.data };
     await server_1.redisClient.set(cacheKey, JSON.stringify(response));
     res.status(200).json({ response });
+    return;
+});
+exports.getUserBlogs = (0, TryCatch_1.default)(async (req, res) => {
+    const { author } = req.params;
+    if (!author) {
+        res.status(404).json({ message: "author not exist" });
+        return;
+    }
+    const blogs = await (0, db_1.sql) `SELECT * FROM blogs WHERE author=${author}`;
+    res.json({ message: "blog fetch success", data: blogs });
     return;
 });
 exports.addComment = (0, TryCatch_1.default)(async (req, res) => {

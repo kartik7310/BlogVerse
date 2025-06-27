@@ -1,5 +1,5 @@
 
-import jwt from "jsonwebtoken";
+
 import User from "../Model/user.js";
 import { loginSchema, signupSchema } from "../utils/validations/validaton.js";
 import { authenticateRequest } from "../Middleware/auth.js";
@@ -143,18 +143,57 @@ export const googleLogin = TryCatch(async(req,res):Promise<void>=>{
   }
 );
 
-
-export const myProfile = TryCatch(async (req: authenticateRequest, res):Promise<void> => {
+export const myProfile = TryCatch(async (req: authenticateRequest, res): Promise<void> => {
   const userId = req.user;
- const user = await User.findById(userId);
+   if(!userId){
+    res.status(404).json({message:"userId not provide"});
+    return;
+   }
+  const user = await User.findById(userId);
 
- 
- if(!user){
-   res.status(404).json({message:"user not valid"});
-   return;
- }
-  res.json(user);
+  if (!user) {
+    res.status(404).json({ message: "User not valid" });
+    return;
+  }
+  
+  const author = user._id;
+const token = req.headers.authorization;
+if(!token){
+  res.json({message:"token not provide"});
   return;
+}
+  try {
+    const { data } = await axios.get(
+      `http://localhost:5002/api/v1/profile/my-blogs/${author}`,
+      {
+    headers: {
+      Authorization: token
+    }
+  }
+    );
+   
+    
+  const blogs = Array.isArray(data.data) ? data.data : [];
+
+    res.status(200).json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        bio: user.bio,
+        facebook: user.facebook,
+        linkedin: user.linkedin,
+        instagram: user.instagram,
+      },
+      blogs: data?.data,
+    });
+  } catch (error: any) {
+  console.error("Error fetching blogs:", error?.message);
+  console.error("Full error object:", error?.response?.data || error);
+  res.status(500).json({ message: "Error fetching blogs" });
+}
 });
 
 export const getUserProfile = TryCatch(async (req,res) => {

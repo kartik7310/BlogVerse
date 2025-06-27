@@ -1,14 +1,21 @@
-'use client';
+"use client"
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import BlogCard from "@/components/BlogCard";
 import { useAppContext } from '../context/appContext';
+import { useRouter } from "next/navigation";
 import { Suspense } from "react";
 const Page = () => {
+  const router = useRouter()
   const {isAuth,blog,loading} = useAppContext();
   
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  useEffect(()=>{
+    if(!loading && !isAuth){
+      router.push("/login")
+    }
+  }, [loading, isAuth, router])
 
   return (
     <div className="flex mt-16 bg-gray-100 min-h-screen">

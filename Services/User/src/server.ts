@@ -1,11 +1,10 @@
+
 import express from "express";
 import { mongoConnection } from "./utils/db.js";
 import userRoute from "./Routes/userRoute.js";
 import cors from "cors"
 const app = express ();
 const frontend_Url = process.env.Frontend_Url;
-
-
 mongoConnection()
 app.use(express.json())
 

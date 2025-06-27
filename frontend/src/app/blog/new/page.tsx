@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -22,7 +22,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RefreshCw } from "lucide-react";
 import dynamic from "next/dynamic";
-import {  authorServiceUrl, Blog } from "@/app/context/appContext";
+import {  useRouter } from 'next/navigation';
+import {  authorServiceUrl, Blog, useAppContext } from "@/app/context/appContext";
+
+
+
 import toast from "react-hot-toast";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
@@ -30,6 +34,14 @@ const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 export const blogCategory = ["Travel", "Education", "Technology", "Health", "Finance"];
 
 const AddBlog = () => {
+ const router = useRouter()
+  const{isAuth} = useAppContext();
+   useEffect(() => {
+       if (!isAuth ) {
+         router.push("/login"); 
+       }
+     }, [isAuth,router]);
+   
   const editor = useRef(null);
 
   /* ─── Local state ─────────────────────────────── */
@@ -74,11 +86,11 @@ const AddBlog = () => {
       setLoading(true);
       const token = Cookies.get("token");
       const { data } = await axios.post(
-        `${authorServiceUrl}/api/v1/blog/new`,
+        `http://localhost:5000/api/v1/blog/new`,
         fd,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success(data.message ?? "Blog created!");
+      toast.success(data?.message ?? "Blog created!");
       setFormData({
         title: "",
         description: "",
@@ -87,7 +99,7 @@ const AddBlog = () => {
         blogContent: "",
       });
       setContent("");
-
+      router.push("/dashboard")
     } catch (err: any) {
       toast.error(err?.response?.data?.message ?? "Something went wrong");
       console.error(err);
@@ -101,9 +113,10 @@ const AddBlog = () => {
     try {
       setAiTitle(true);
       const { data } = await axios.post(
-        `${authorServiceUrl}/api/v1/ai/title`,
+        `http://localhost:5000/api/v1/ai/title`,
         { text: formData.title }
       );
+   
       setFormData({ ...formData, title: data.title ?? data });
     } catch (err) {
       toast.error("Error while fetching AI-generated title");

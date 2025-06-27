@@ -30,7 +30,15 @@ export const blogCategory = ["Travel", "Education", "Technology", "Health", "Fin
 
 const EditBlog = () => {
   const {fetchBlogs} = useAppContext()
-  const router = useRouter()
+const router = useRouter()
+  const{isAuth} = useAppContext();
+     useEffect(() => {
+         if (!isAuth) {
+           router.push("/login"); 
+         }
+       }, [isAuth, router]);
+     
+  
   const editor = useRef(null);
   const { blogId } = useParams();
   const [loading, setLoading] = useState(false);

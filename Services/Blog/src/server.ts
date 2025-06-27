@@ -1,12 +1,11 @@
-import dotenv from "dotenv";
-dotenv.config();
+
 import cors from "cors"
 import express from "express";
 import { createClient } from "redis";
 import blogRoute from "./Routes/blogRoute";
 import { startCacheConsumer } from "./utils/Consumer";
 const app = express();
-const frontend_Url = process.env.Frontend_Url
+const frontend_Url = process.env.Frontend_Url;
 export const redisClient = createClient({
   url: process.env.REDIS_URL,
 });

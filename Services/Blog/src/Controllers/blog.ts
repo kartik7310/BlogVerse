@@ -35,10 +35,10 @@ export const getAllBlogs = TryCatch(async(req,res):Promise<void>=>{
   } else {
     blogs = await sql`SELECT * FROM blogs ORDER BY createdAt DESC`;
   }
-  console.log("serving from db");
+
   
   if(blogs.length===0){
-     res.status(404).json({message:"blogs not found "})
+     res.status(404).json({message:"blog not exist"})
      return;
   }
 
@@ -74,6 +74,17 @@ if(cached){
    return;
 })
 
+export const getUserBlogs = TryCatch(async(req:authenticateRequest,res):Promise<void>=>{
+  const {author}= req.params;  
+   if(!author){
+    res.status(404).json({message:"author not exist"});
+    return;
+   }
+   const blogs = await sql `SELECT * FROM blogs WHERE author=${author}`;
+   res.json({message:"blog fetch success",data:blogs});
+   return;
+   
+})
 
 export const addComment = TryCatch(async(req:authenticateRequest,res):Promise<void>=>{
 

@@ -12,18 +12,17 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Toaster } from "react-hot-toast";
-import { headers } from "next/headers";
+
 
 /* ─────────────────────────────
    1. API-endpoint constants
    ───────────────────────────── */
 export const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE;
 export const blogServiceUrl = process.env.NEXT_PUBLIC_BLOG_SERVICE;
-export const authorServiceUrl = process.env.NEXT_PUBLIC_AUTHOR_SERVICE ;
-console.log("api is here",userServiceUrl); 
+export const authorServiceUrl = process.env.NEXT_PUBLIC_AUTHOR_SERVICE;
 
 export interface User {
-  _id:string
+  _id: string;
   name: string;
   email: string;
   image: string;
@@ -44,7 +43,7 @@ export interface Blog {
   image: string;
   category: string;
   author: string;
-  created_at: string;
+  createdat: string;
 }
 
 //savedBlog shape
@@ -52,7 +51,7 @@ export interface SavedBlogType {
   id: string;
   userId: string;
   blogId: string;
-  create_at: string;
+  createat: string;
 }
 
 //  3. Context shape
@@ -68,12 +67,12 @@ interface AppContextType {
   logout: () => void;
   blog: Blog[] | null;
   blogLoading: boolean;
-  fetchBlogs:any;
+  fetchBlogs: any;
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   setCategory: React.Dispatch<React.SetStateAction<string>>;
-  savedBlogs:SavedBlogType[]|null;
-  getSavedBlog:()=>Promise<void>
+  savedBlogs: SavedBlogType[] | null;
+  getSavedBlog: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -103,16 +102,17 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
 
     try {
-      const { data } = await axios.get<User>(`${userServiceUrl}/api/v1/user/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
-  
+      const { data } = await axios.get<User>(
+        `${userServiceUrl}/api/v1/user/me`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        }
+      );
+      console.log("after fetch user data with blogs",data);
       
       setUserData(data);
       setIsAuth(true);
-  
-      
     } catch (err) {
       console.error("[AppContext] fetchUser failed", err);
       Cookies.remove("token");
@@ -129,17 +129,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [category, setCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  
   const fetchBlogs = async () => {
-    
-    
     try {
       setBlogLoading(true);
       const response = await axios.get<Blog[]>(
         `${blogServiceUrl}/api/v1/blog/all?searchQuery=${searchQuery}&category=${category}`
       );
       setBlogs(response?.data?.blog);
-      
     } catch (error: any) {
       console.log(error.message);
     } finally {
@@ -147,18 +143,20 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
-  
   const [savedBlogs, setSavedBlogs] = useState<SavedBlogType[] | null>(null);
-   
+
   async function getSavedBlog() {
     try {
       const token = Cookies.get("token");
-      const{data} = await axios.get(`${blogServiceUrl}/api/v1/blog/saved/blog`,{
-        headers:{
-          Authorization: `Bearer ${token}`,
+      const { data } = await axios.get(
+        `${blogServiceUrl}/api/v1/blog/saved/blog`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      })
-      setSavedBlogs(data)
+      );
+      setSavedBlogs(data);
     } catch (error) {
       console.log(error);
     }
@@ -173,13 +171,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   useEffect(() => {
     fetchUser();
-    getSavedBlog()
+    getSavedBlog();
   }, []);
 
   useEffect(() => {
     fetchBlogs();
-   
-    
   }, [category, searchQuery]);
 
   const contextValue = React.useMemo<AppContextType>(
@@ -199,17 +195,23 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       setSearchQuery,
       setCategory,
       savedBlogs,
-      getSavedBlog
+      getSavedBlog,
     }),
-    [userData, isAuth, loading, fetchUser, blog,searchQuery,category,getSavedBlog]
+    [
+      userData,
+      isAuth,
+      loading,
+      fetchUser,
+      blog,
+      searchQuery,
+      category,
+      getSavedBlog,
+    ]
   );
 
   return (
     <GoogleOAuthProvider
-      clientId={
-        process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string
-        
-      }
+      clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}
     >
       <AppContext.Provider value={contextValue}>
         {children}

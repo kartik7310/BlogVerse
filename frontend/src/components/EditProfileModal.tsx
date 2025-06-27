@@ -43,7 +43,7 @@ export default function EditProfileModal({
   const { userData } = useAppContext();
   const [form, setForm] = useState(emptyProfile);
   const [loading, setLoading] = useState(false);
-
+   const user = userData?.user
   /* ---------- populate when opened ---------- */
   useEffect(() => {
     if (isOpen) {
@@ -80,7 +80,7 @@ export default function EditProfileModal({
     const token = Cookies.get('token'); // <-- 1. safe, single parentheses
     if (!token) return toast.error('Session expired — please log in again');
 
-    if (!userData?._id) return toast.error('Cannot find your user ID');
+    if (!user?._id) return toast.error('Cannot find your user ID');
 
     // 2. Skip request when nothing changed
     const changed = Object.keys(form).some(
@@ -90,7 +90,7 @@ export default function EditProfileModal({
 
     try {
       setLoading(true);
-      await updateProfile(userData._id, form, token); // <-- 3. pass form + token
+      await updateProfile(user?._id, form, token); // <-- 3. pass form + token
      
       onSave(form);
       onClose();

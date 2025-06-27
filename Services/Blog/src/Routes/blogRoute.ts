@@ -1,10 +1,11 @@
 import express from "express";
 const router = express.Router();
-import { addComment, getAllBlogs, getRecommendedBlogs,singleBlog, deleteComment, getAllComments, savedBlogs, getSavedBlog } from "../Controllers/blog";
+import { addComment, getAllBlogs, getRecommendedBlogs,singleBlog, deleteComment, getUserBlogs,getAllComments, savedBlogs, getSavedBlog } from "../Controllers/blog";
 import { auth } from "../Middleware/auth";
 router.get("/blog/all",getAllBlogs)
 router.get("/blog/:id",singleBlog)
 router.get("/blog/recommendedBlogs/:id",getRecommendedBlogs)
+router.get("/profile/my-blogs/:author",auth,getUserBlogs)
 
 router.get("/blog/comment/fetch/:id",getAllComments)
 router.post("/blog/comment/:blogId",auth,addComment)

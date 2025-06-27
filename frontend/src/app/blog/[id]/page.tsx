@@ -34,7 +34,7 @@ const Page = () => {
   const [newComment, setNewComment] = useState("");
   const  [save,setSaved] = useState(false)
   const { id } = useParams();
-
+  const user = userData?.user
   const fetchSingleBlog = async () => {
     try {
       setLoading(true);
@@ -184,7 +184,7 @@ async function handleSavedBlog() {
             />
             <div>
               <Link
-                href={`/user/${author._id}`}
+                href={`/profile/${author._id}`}
                 className="text-lg font-semibold"
               >
                 {author.name}
@@ -199,7 +199,7 @@ async function handleSavedBlog() {
                  {save?<BookmarkCheckIcon/>: <Bookmark />}
                 </Button>
               )}
-              {blog?.author === userData?._id && (
+              {blog?.author === user?._id && (
                 <>
                   <Button
                     size={"sm"}
@@ -267,7 +267,7 @@ async function handleSavedBlog() {
                         <span className="text-xs text-gray-500 mt-1 font-normal">
                           {new Date(comm?.createdat).toDateString()}
                         </span>
-                        {comm?.userid === userData?._id && (
+                        {comm?.userid === user?._id && (
                           
                             <Button
                               size={"sm"}

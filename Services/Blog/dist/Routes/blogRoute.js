@@ -10,6 +10,7 @@ const auth_1 = require("../Middleware/auth");
 router.get("/blog/all", blog_1.getAllBlogs);
 router.get("/blog/:id", blog_1.singleBlog);
 router.get("/blog/recommendedBlogs/:id", blog_1.getRecommendedBlogs);
+router.get("/profile/my-blogs/:author", auth_1.auth, blog_1.getUserBlogs);
 router.get("/blog/comment/fetch/:id", blog_1.getAllComments);
 router.post("/blog/comment/:blogId", auth_1.auth, blog_1.addComment);
 router.delete("/blog/comment/delete/:commentId", auth_1.auth, blog_1.deleteComment);

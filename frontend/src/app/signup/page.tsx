@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { redirect, useRouter } from 'next/navigation';
+import React, { useState ,useEffect} from 'react';
+import {  useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -17,9 +17,12 @@ interface UserPayload {
 const Signup = () => {
   const router = useRouter();
   const{isAuth} = useAppContext()
-  if(isAuth){
-    return redirect("/home")
-  }
+ useEffect(() => {
+     if (isAuth) {
+       router.push("/dashboard"); 
+     }
+   }, [isAuth, router]);
+ 
   const [user, setUser] = useState<UserPayload>({ name: '', email: '', password: '' });
   const [loading, setLoading] = useState(false);
 

@@ -1,16 +1,15 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { FcGoogle } from 'react-icons/fc';
-import Link from 'next/link';
-import { useGoogleLogin } from '@react-oauth/google';
-import Cookies from 'js-cookie';
-import toast from 'react-hot-toast';
+import React, { useEffect, useState } from "react";
+import { FcGoogle } from "react-icons/fc";
+import Link from "next/link";
+import { useGoogleLogin } from "@react-oauth/google";
+import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 import axios from "axios";
-import { useAppContext, userServiceUrl } from '../context/appContext';
-import Loading from '@/components/Loading';
-import { redirect ,useRouter} from 'next/navigation'
-
+import { useAppContext, userServiceUrl } from "../context/appContext";
+import Loading from "@/components/Loading";
+import { useRouter } from "next/navigation";
 
 interface User {
   email: string;
@@ -18,15 +17,18 @@ interface User {
 }
 
 const Login = () => {
-  const router = useRouter()
-  const {isAuth, setIsAuth, loading, setLoading } = useAppContext();
+  const router = useRouter();
+  const { isAuth, setIsAuth, loading, setLoading } = useAppContext();
 
-  
-   if(isAuth) return redirect("/home")
   const [user, setUser] = useState<User>({
     email: "",
-    password: ""
+    password: "",
   });
+  useEffect(() => {
+    if (isAuth) {
+      router.push("/dashboard"); 
+    }
+  }, [isAuth, router]);
 
   const googleResponse = async (authResult: any) => {
     try {
@@ -48,7 +50,9 @@ const Login = () => {
       setIsAuth(true);
       toast.success(result?.data?.message || "Logged in successfully!");
     } catch (error: any) {
-      toast.error(`Login failed: ${error?.response?.data?.message || error.message}`);
+      toast.error(
+        `Login failed: ${error?.response?.data?.message || error.message}`
+      );
     }
   };
 
@@ -85,7 +89,9 @@ const Login = () => {
       setIsAuth(true);
       toast.success(response?.data?.message || "Logged in successfully!");
     } catch (error: any) {
-      toast.error(`Login failed: ${error?.response?.data?.message || error.message}`);
+      toast.error(
+        `Login failed: ${error?.response?.data?.message || error.message}`
+      );
     } finally {
       setLoading(false);
     }
@@ -93,9 +99,7 @@ const Login = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUser((prevUser) => ({...prevUser,
-      [name]: value,
-    }));
+    setUser((prevUser) => ({ ...prevUser, [name]: value }));
   };
 
   return loading ? (
@@ -104,7 +108,9 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-screen bg-white mt-8  px-4">
       <div className="w-full sm:max-w-md bg-white p-6 sm:p-8 rounded-2xl shadow-xl h-[72vh] flex flex-col justify-between">
         <div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-6">Log In</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-6">
+            Log In
+          </h2>
 
           <form className="space-y-4" onSubmit={manualLogin}>
             <div>
@@ -144,14 +150,16 @@ const Login = () => {
           </form>
         </div>
 
-        <div className='mt-2'>
+        <div className="mt-2">
           <button
             onClick={() => googleLogin()}
             type="button"
             className="w-full flex items-center justify-center gap-2 border border-gray-600 py-2 rounded-lg hover:bg-gray-300 cursor-pointer transition duration-200"
           >
             <FcGoogle className="text-xl" />
-            <span className="text-sm sm:text-base text-gray-600 font-bold cursor-pointer ">Login with Google</span>
+            <span className="text-sm sm:text-base text-gray-600 font-bold cursor-pointer ">
+              Login with Google
+            </span>
           </button>
         </div>
       </div>
