@@ -2,6 +2,7 @@
 import { Menu, SquareDashed, X } from "lucide-react";
 import { blogCategory } from "@/app/blog/new/page";
 import { useAppContext } from "@/app/context/appContext";
+import { useEffect, useState } from "react";
 
 type SidebarProps = {
   open: boolean;
@@ -10,7 +11,13 @@ type SidebarProps = {
 
 export default function Sidebar({ open, setOpen }: SidebarProps) {
   const { searchQuery, setSearchQuery, setCategory } = useAppContext();
-
+  const [localSearch ,setLocalSearch] = useState(searchQuery)
+  useEffect(()=>{
+    const debounce = setTimeout(()=>{
+   setSearchQuery(localSearch)
+    },1000);
+    return()=>clearTimeout(debounce)
+  },[localSearch])
   return (
     <>
       {/* Mobile Top Navbar */}
@@ -31,8 +38,8 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
         </div>
         <nav className="flex flex-col p-4 gap-3">
           <input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
             type="text"
             placeholder="Search your desired blog"
             className="py-2 px-2 rounded-md border border-gray-300 -mt-3"
